@@ -1,85 +1,24 @@
 const express = require("express");
 const router = express.Router();
 
-const { schemaCreate, schemaUptade } = require("../../chemas/joiSchema");
-
+const { createValidation, updateValidation } = require("../../chemas/joiSchema");
+const { controllerWrapper } = require("../../helpers/errorHandler");
 const {
-  listContacts,
-  getContactById,
-  addContact,
-  removeContact,
-  updateContact,
-} = require("../../models/contacts.js");
+  getContactController,
+  getContactByIdController,
+  addContactControler,
+  deleteContactControler,
+  updateContactsControler,
+} = require("../../controllers/controllers");
 
-router.get("/", async (req, res, next) => {
-  try {
-    const contacts = await listContacts();
-    res.json(contacts);
-  } catch (err) {
-    res.status(500).json({ message: `${err.massage}` });
-  }
-});
+router.get("/", controllerWrapper(getContactController));
 
-router.get("/:contactId", async (req, res, next) => {
-  try {
-    const contactById = await getContactById(req.params.contactId);
+router.get("/:contactId", controllerWrapper(getContactByIdController));
 
-    contactById
-      ? res.json(contactById)
-      : res.status(404).json({ massage: "Not found" });
-  } catch (err) {
-    res.status(500).json({ message: `${err.massage}` });
-  }
-});
+router.post("/", createValidation, controllerWrapper(addContactControler));
 
-router.post("/", async (req, res, next) => {
-  try {
-    const { error } = schemaCreate.validate(req.body);
-    if (error) {
-      return res.status(500).json({ message: "Missing required name field" });
-    }
+router.delete("/:contactId", controllerWrapper(deleteContactControler));
 
-    const { name, email, phone } = req.body;
-    const newContact = await addContact({ name, email, phone });
-
-    res.status(201).json(newContact);
-  } catch (err) {
-    res.status(500).json({ message: `${err.massage}` });
-  }
-});
-
-router.delete("/:contactId", async (req, res, next) => {
-  try {
-    const contacts = await removeContact(req.params.contactId);
-
-    contacts
-      ? res.json({ message: "contact deleted" })
-      : res.status(404).json({ massage: "Not found" });
-  } catch (err) {
-    res.status(500).json({ message: `${err.massage}` });
-  }
-});
-
-router.put("/:contactId", async (req, res, next) => {
-  try {
-    const { error } = schemaUptade.validate(req.body);
-    if (error) {
-      return res.status(500).json({ message: "Missing field" });
-    }
-
-    const { contactId } = req.params;
-    const { name, email, phone } = req.body;
-    const updatedContact = await updateContact(contactId, {
-      name,
-      email,
-      phone,
-    });
-    updatedContact
-      ? res.json(updatedContact)
-      : res.status(404).json({ massage: "Not found" });
-  } catch (err) {
-    res.status(500).json({ message: `${err.massage}` });
-  }
-});
+router.put("/:contactId", updateValidation, controllerWrapper(updateContactsControler));
 
 module.exports = router;
