@@ -64,7 +64,7 @@ router.put("/:contactId", async (req, res, next) => {
   try {
     const { error } = schemaUptade.validate(req.body);
     if (error) {
-      return res.status(500).json({ message: "Missing fields" });
+      return res.status(500).json({ message: "Missing field" });
     }
 
     const { contactId } = req.params;
