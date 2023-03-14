@@ -3,7 +3,7 @@ const { ValidationError } = require("../helpers/error");
 
 const createValidation = (req, res, next) => {
   const schemaCreate = Joi.object({
-    name: Joi.string().alphanum().min(3).max(30).required(),
+    name: Joi.string().min(3).max(30).required(),
     phone: Joi.string().required(),
     email: Joi.string()
       .email({
@@ -11,6 +11,7 @@ const createValidation = (req, res, next) => {
         tlds: { allow: ["com", "net", "org", "ca", "uk"] },
       })
       .required(),
+    favorite: Joi.boolean().optional(),
   });
   const { error } = schemaCreate.validate(req.body);
   if (error) {
@@ -21,7 +22,7 @@ const createValidation = (req, res, next) => {
 
 const updateValidation = (req, res, next) => {
   const schemaUptade = Joi.object({
-    name: Joi.string().alphanum().min(3).max(30).optional(),
+    name: Joi.string().min(3).max(30).optional(),
     phone: Joi.string().optional(),
     email: Joi.string()
       .email({
@@ -29,6 +30,7 @@ const updateValidation = (req, res, next) => {
         tlds: { allow: ["com", "net", "org", "ca", "uk"] },
       })
       .optional(),
+    favorite: Joi.boolean().optional(),
   });
 
   const { error } = schemaUptade.validate(req.body);
