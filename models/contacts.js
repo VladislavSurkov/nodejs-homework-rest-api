@@ -1,51 +1,48 @@
-const fs = require("fs/promises");
-const path = require("node:path");
-const { v4: uuidv4 } = require("uuid");
-
-const contactsPath = path.join(__dirname, "contacts.json");
+const { Contact } = require("../db/contactModel");
 
 const listContacts = async () => {
-  const contacts = await fs.readFile(contactsPath, "utf8");
-  return JSON.parse(contacts);
+  const contacts = await Contact.find({});
+  return contacts;
 };
 
 const getContactById = async (contactId) => {
-  const contacts = await listContacts();
-  const [contact] = contacts.filter((contact) => contact.id === contactId);
-  return contact;
+  const contactById = await Contact.findById(contactId);
+  return contactById;
 };
 
 const addContact = async (body) => {
-  const contacts = await listContacts();
-  const newContact = { id: uuidv4(), ...body };
-  contacts.push(newContact);
-  fs.writeFile(contactsPath, JSON.stringify(contacts, null, " "));
+  const newContact = new Contact({ ...body });
+  await newContact.save();
   return newContact;
 };
 
 const removeContact = async (contactId) => {
-  const contactById = await getContactById(contactId);
-  const contacts = await listContacts();
-
-  const deleteContact = contacts.filter((contact) => contact.id !== contactId);
-  fs.writeFile(contactsPath, JSON.stringify(deleteContact, null, " "));
-  return contactById;
+  const contacts = await Contact.findByIdAndRemove(contactId);
+  return contacts;
 };
 
 const updateContact = async (contactId, body) => {
-  const contacts = await listContacts();
-
-  const updatedContact = contacts.map((contact) =>
-    contact.id === contactId ? { ...contact, ...body } : contact
+  const updatedContact = await Contact.findByIdAndUpdate(
+    contactId,
+    { $set: { ...body } },
+    { new: true }
   );
-  fs.writeFile(contactsPath, JSON.stringify(updatedContact, null, " "));
   return updatedContact;
 };
 
+const updateStatusContact = async (contactId, { favorite }) => {
+  const updatedStatus = await Contact.findByIdAndUpdate(
+    contactId,
+    { $set: { favorite } },
+    { new: true }
+  );
+  return updatedStatus;
+};
 module.exports = {
   listContacts,
   getContactById,
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 };
