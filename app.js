@@ -3,6 +3,7 @@ const logger = require('morgan')
 const cors = require('cors')
 const path = require("path");
 
+const authRouter = require('./routes/api/auth')
 const contactsRouter = require('./routes/api/contacts')
 const { connectDb } = require('./db/connection')
 
@@ -17,6 +18,7 @@ app.use(logger(formatsLogger))
 app.use(cors())
 app.use(express.json())
 
+app.use('/api/users', authRouter);
 app.use('/api/contacts', contactsRouter)
 connectDb();
 

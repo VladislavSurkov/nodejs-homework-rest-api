@@ -1,13 +1,12 @@
 const { NodeError } = require("./error");
 
-const controllerWrapper = (controller) => {
-    return (req, res, next) => {
+const ctrlWrapper = (controller) => {
+  return (req, res, next) => {
     controller(req, res).catch(next);
   };
 };
 
 const errorHandler = (error, req, res, next) => {
-    console.log(error.message);
   if (error instanceof NodeError) {
     return res.status(error.status).json({ message: error.message });
   }
@@ -15,6 +14,6 @@ const errorHandler = (error, req, res, next) => {
 };
 
 module.exports = {
-  controllerWrapper,
+  ctrlWrapper,
   errorHandler,
 };

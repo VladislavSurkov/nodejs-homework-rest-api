@@ -1,7 +1,7 @@
 const Joi = require("joi");
-const { ValidationError } = require("../helpers/error");
+const { ValidationError } = require("../../helpers/error");
 
-const createValidation = (req, res, next) => {
+const createValid = (req, res, next) => {
   const schemaCreate = Joi.object({
     name: Joi.string().min(3).max(30).required(),
     phone: Joi.string().required(),
@@ -13,14 +13,15 @@ const createValidation = (req, res, next) => {
       .required(),
     favorite: Joi.boolean().optional(),
   });
+
   const { error } = schemaCreate.validate(req.body);
   if (error) {
-    next(new ValidationError(JSON.stringify(error.message), 401));
+    next(new ValidationError(error.message, 400));
   }
   next();
 };
 
-const updateValidation = (req, res, next) => {
+const updateValid = (req, res, next) => {
   const schemaUptade = Joi.object({
     name: Joi.string().min(3).max(30).optional(),
     phone: Joi.string().optional(),
@@ -35,12 +36,12 @@ const updateValidation = (req, res, next) => {
 
   const { error } = schemaUptade.validate(req.body);
   if (error) {
-    next(new ValidationError(JSON.stringify(error.message), 401));
+    next(new ValidationError(error.message, 400));
   }
   next();
 };
 
 module.exports = {
-  createValidation,
-  updateValidation,
+  createValid,
+  updateValid,
 };

@@ -12,15 +12,8 @@ class ValidationError extends NodeError {
   }
 }
 
-class ServerError extends NodeError {
-  constructor(message, status) {
-    super(message);
-    this.status = status;
-  }
-}
-
 module.exports = {
   NodeError,
   ValidationError,
-  ServerError,
+
 };
