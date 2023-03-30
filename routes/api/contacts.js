@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { ctrlWrapper } = require("../../helpers/errorHandler");
 const { createValid, updateValid } = require("../../models/contact/joiSchema");
-const { auth } = require("../../middlewares/auth");
+const { auth } = require("../../middlewares");
 const { contacts: ctrl } = require("../../controllers");
 
 router.use(auth);
