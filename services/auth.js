@@ -1,14 +1,15 @@
 const { User } = require("../models/user/user");
 const jwt = require("jsonwebtoken");
 
-const findUserByEmail = async ({ email }) => {
-  const user = await User.findOne({ email });
+const findUserBy = async (data) => {
+  const user = await User.findOne(data);
   return user;
 };
 
-const regUser = async ({ email, avatarURL, password }) => {
-  const newUser = new User({ email, avatarURL, password });
+const regUser = async ({ email, avatarURL, password, verificationToken }) => {
+  const newUser = new User({ email, avatarURL, password, verificationToken });
   newUser.hashPassword(password);
+
   await newUser.save();
   return newUser;
 };
@@ -51,12 +52,17 @@ const updateAvatar = async (_id, avatarURL) => {
   return updatedAvatar;
 };
 
+const verifyUser = async (_id) => {
+  await User.findByIdAndUpdate(_id, { verify: true, verificationToken: null });
+};
+
 module.exports = {
-  findUserByEmail,
+  findUserBy,
   regUser,
   login,
   createToken,
   logout,
   updateSubscription,
   updateAvatar,
+  verifyUser,
 };

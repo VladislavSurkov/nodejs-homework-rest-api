@@ -16,4 +16,14 @@ const userValid = (req, res, next) => {
   next();
 };
 
-module.exports = { userValid };
+const verifyValid = (req, res, next) => {
+  const joiSchema = Joi.object({ email: Joi.string().required() });
+
+  const { error } = joiSchema.validate(req.body);
+  if (error) {
+    next(new ValidationError({ message: "missing required field email" }, 400));
+  }
+  next();
+};
+
+module.exports = { userValid, verifyValid };
