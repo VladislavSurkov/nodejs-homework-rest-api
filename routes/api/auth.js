@@ -1,11 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { userValid } = require("../../models/user/joiShema");
+const { userValid, verifyValid } = require("../../models/user/joiShema");
 const { ctrlWrapper } = require("../../helpers/errorHandler");
 const { auth: ctrl } = require("../../controllers");
 const { auth, upload } = require("../../middlewares");
 
 router.post("/register", userValid, ctrlWrapper(ctrl.registerUser));
+
+router.get("/verify/:verificationToken", ctrlWrapper(ctrl.verificationEmail));
+
+router.post("/verify", verifyValid, ctrlWrapper(ctrl.verifyRepeat));
 
 router.post("/login", userValid, ctrlWrapper(ctrl.loginUser));
 
